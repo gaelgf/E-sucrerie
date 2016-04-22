@@ -1,4 +1,8 @@
 /*** ESSENTIAL STYLES ***/
+@font-face {
+    font-family: tekton;
+    src: url(../../../../fonts/TektonPro-Bold.otf);
+}
 .sf-contener {
   clear: both;
   float: left;
@@ -58,17 +62,18 @@
         .sf-menu > li span.active:after {
           content: "\f068"; } }
   .sf-menu > li > a {
-    font: 600 18px/22px "Open Sans", sans-serif;
+    font-size : 24px;
+    font-family: Tekton;
     text-transform: uppercase;
-    color: #484848;
+    color: #EC88AB;
     display: block;
     padding: 17px 20px;
     border-bottom: 3px solid #e9e9e9; }
-  .sf-menu > li.sfHover > a,
+  /*.sf-menu > li.sfHover > a,
   .sf-menu > li > a:hover, .sf-menu > li.sfHoverForce > a {
     background: #333;
     border-bottom-color: #666666;
-    color: #fff; }
+    color: #fff; }*/
 
 .sf-menu li li li a {
   display: inline-block;
@@ -102,7 +107,7 @@
 
 .sf-menu li li ul {
   position: static;
-  display: block !important;
+  display: none;
   opacity: 1 !important;
   background: none;
   -moz-box-shadow: transparent 0px 0px 0px;
@@ -140,7 +145,8 @@ ul.sf-menu li li li.sfHover ul {
   width: 100%; }
   .sf-menu > li > ul > li > a {
     text-transform: uppercase;
-    font: 600 16px/20px "Open Sans", sans-serif;
+    font-size: 18px;
+    font-family:tekton;
     color: #333; }
     .sf-menu > li > ul > li > a:hover {
       color: #515151; }
