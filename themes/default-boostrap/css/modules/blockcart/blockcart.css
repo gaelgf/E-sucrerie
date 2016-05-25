@@ -2,6 +2,7 @@
 					Cart Block Styles
 ********************************************************************/
 #header .shopping_cart {
+  z-index: 3;
   position: relative;
   margin-top: -380px;
   float: right;

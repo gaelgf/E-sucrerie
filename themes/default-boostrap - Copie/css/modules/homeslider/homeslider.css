@@ -2,6 +2,8 @@
 						Home Page Slider
 *******************************************************************************/
 #homepage-slider {
+  border-radius: 7px;
+  box-shadow: 1px 1px 6px rgba(101, 101, 101, 0.82);
   padding-left: 0;
   padding-right: 0;
   margin-bottom: 14px;

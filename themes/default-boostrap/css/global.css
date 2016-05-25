@@ -88,7 +88,8 @@ html {
   -ms-text-size-adjust: 100%; }
 
 body {
-  margin: 0; }
+  margin: 0;
+}
 
 a:focus {
   outline: thin dotted; }
@@ -573,6 +574,7 @@ pre {
 header .row  #header_logo{
 width: 100% !important;
   z-index: 2;
+
 }
 .logo{
 width: auto;
@@ -5729,10 +5731,13 @@ textarea {
   resize: none; }
 
 #header {
-  z-index: 5003; }
+  z-index: 5003;
+  background: url("http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/lightpaperfibers.png");
+}
 
 .columns-container {
-  background: #fff; }
+  /*background: #fff;*/
+  background: url("http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/lightpaperfibers.png");}
 
 #columns {
   position: relative;
@@ -6469,7 +6474,8 @@ table.table_block td {
 
 #home-page-tabs {
   border: none;
-  background: #fff; }
+  /* background: #fff; */
+  background: url("http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/lightpaperfibers.png");}
   @media (min-width: 768px) {
     #home-page-tabs {
       padding: 10px 0;
