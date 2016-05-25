@@ -572,6 +572,7 @@ pre {
 
 header .row  #header_logo{
 width: 100% !important;
+  z-index: 2;
 }
 .logo{
 width: auto;
@@ -699,7 +700,7 @@ header .row #header_logo,
   .col-sm-9,
   .col-sm-10,
   .col-sm-11 {
-    float: left; 
+    float: right;
 	margin-left}
 
   .col-sm-1 {
