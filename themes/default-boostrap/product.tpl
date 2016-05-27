@@ -558,6 +558,14 @@
 					</div>
 				</div>
 			</section>
+
+
+
+
+
+
+
+
 			<!--end Accessories -->
 		{/if}
 		{if isset($HOOK_PRODUCT_FOOTER) && $HOOK_PRODUCT_FOOTER}{$HOOK_PRODUCT_FOOTER}{/if}
