@@ -6,6 +6,7 @@
 !modules/**
 !override/**
 !themes/**
+!error500.html
 
 # ...even if they are in subdirectories
 !*/
