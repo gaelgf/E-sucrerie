@@ -4,7 +4,7 @@
 #header .shopping_cart {
   z-index: 3;
   position: relative;
-  margin-top: -380px;
+  margin-top: -550px;
   float: right;
   padding-top: 50px; }
   #header .shopping_cart > a:first-child:after {
