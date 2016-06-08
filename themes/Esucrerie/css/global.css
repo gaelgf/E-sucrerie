@@ -8610,3 +8610,6 @@ div.star.star_hover:after {
 .content_scene_cat {
     border-top: 5px solid #f1b685 !important;
 }
+#header .shopping_cart{
+    margin-top: -500px !important;
+}
