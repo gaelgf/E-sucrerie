@@ -24,9 +24,10 @@ class GiftIdea extends Module {
 	}
 
 	public function install() {
+		$sql= "CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."giftidea`(`id_giftidea` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY ,`id_product` INT(11) NOT NULL )";
 
 		if (!parent::install() ||
-			!Configuration::updateValue('GIFT_IDEA_NUMBER', 5) ||
+			!$result=Db::getInstance()->Execute($sql) ||
 			!$this->registerHook('displayHome')
 			)
 			return false;
@@ -34,10 +35,11 @@ class GiftIdea extends Module {
 	}
 
 	public function uninstall() {
+		$sql= "DROP TABLE `"._DB_PREFIX_."giftidea`";
 
-		if (!parent::uninstall())
+		if (!parent::uninstall() ||
+			!$result=Db::getInstance()->Execute($sql))
 			return false;
-
 		return true;
 
 	}
@@ -45,37 +47,85 @@ class GiftIdea extends Module {
 	public function getContent() {
 
 		$output = null;
-
 		if(Tools::isSubmit('submit'.$this->name)) {
-			$GIFT_IDEA_NUMBER_txt = strval(Tools::getValue('GIFT_IDEA_NUMBER'));
-
-			if(!$GIFT_IDEA_NUMBER_txt || empty($GIFT_IDEA_NUMBER_txt) || !Validate::isGenericName($GIFT_IDEA_NUMBER_txt))
-					$output .= $this->displayError($this->l('Config invalide'));
+			$select_product_id = strval(Tools::getValue('select_product'));
+			if(!$select_product_id || empty($select_product_id))
+				$output .= $this->displayError($this->l('Config invalide'));
 			else {
-				Configuration::updateValue('GIFT_IDEA_NUMBER', $GIFT_IDEA_NUMBER_txt);
-				$output .= $this->displayConfirmation($this->l('Settings updated'));
+				$sql="INSERT INTO `"._DB_PREFIX_."giftidea` (`id_product`) VALUES (".$select_product_id.")";
+				if(!Db::getInstance()->execute($sql))
+					$output .= $this->displayError($this->l('Request invalide'));
+				else
+					$output .= $this->displayConfirmation($this->l('Settings updated'));
 			}
-
+		}
+		else{
+			if(Tools::isSubmit('delete_id_giftidea')){
+				$id_giftidea = strval(Tools::getValue('id_giftidea'));
+				if(!$id_giftidea || empty($id_giftidea))
+					$output .= $this->displayError($this->l('Selectionner un produit'));
+				else {
+					$sql = 'DELETE FROM '._DB_PREFIX_.'giftidea WHERE id_giftidea = '.$id_giftidea;
+					if (!Db::getInstance()->execute($sql))
+						$output .= $this->displayError($this->l('Request invalide'));
+					else
+						$output .= $this->displayConfirmation($this->l('Settings updated'));
+				}
+			}
 		}
 
-		return $output.$this->displayForm();
+		$output.= $this->displayForm();
+		$output.= $this->initList();
+		return $output;
 	}
 
-
 	public function displayForm() {
+		$sql ='SELECT `id_product` FROM `'._DB_PREFIX_.'product` ORDER BY `id_category_default`';
+		$products=array();
+		if ($results = Db::getInstance()->ExecuteS($sql))
+    		foreach ($results as $row){
+				$products[] = new Product($row['id_product'], false, Context::getContext()->language->id);
+    		}
 
+		$product_minify=array();
+		$category="";
+		for($i=0;$i<count($products)-1;$i++) {
+			$product=$products[$i];
+    		$cat = new Category($product->id_category_default, $this->context->language->id);
+			if($cat->name!=$category){
+				$category=$cat->name;
+				if($category=="")
+					$product_minify[]=array(
+						'id_option'=>'',
+						'name'=>"Autres"
+						);
+				else
+					$product_minify[]=array(
+						'id_option'=>'',
+						'name'=>$category
+						);
+			}
+			$product_minify[]=array(
+				'id_option'=>$product->id,
+				'name'=>'-- '.$product->name
+				);
+		}
 		//champs du formulaire
 		$fields_form[0]['form'] = array(
 			'legend' => array(
-				'title' => $this->l('Titre'),
+				'title' => $this->l('GiftIdea'),
 				),
 			'input' => array(
 				array(
-					'type' => 'text',
-					'label' => $this->l('Texte a afficher'),
-					'name' => 'GIFT_IDEA_NUMBER',
-					'size' => 20,
-					'required' =>true
+					'type' => 'select',
+					'label' => $this->l('Selection de produit:'),
+					'name' => 'select_product',
+					'required' => true,
+					'options' => array(
+						'query' => $product_minify,
+						'id' => 'id_option',
+						'name' => 'name'
+						)
 					)
 				),
 			'submit' => array(
@@ -115,21 +165,79 @@ class GiftIdea extends Module {
 				)
 			);
 
-	// Load current value
-		$helper->fields_value['GIFT_IDEA_NUMBER'] = Configuration::get('GIFT_IDEA_NUMBER');
-
 		return $helper->generateForm($fields_form);
 
 	}
 
+	public function initList()
+	{
+		$sql = 'SELECT g.id_giftidea, p.name FROM '._DB_PREFIX_.'product_lang AS p,'._DB_PREFIX_.'giftidea AS g WHERE g.id_product=p.id_product';
+		if ($result = Db::getInstance()->ExecuteS($sql))
+		{
+			$this->fields_list = array(
+				'id_giftidea' => array(
+					'title' => $this->l('Id'),
+					'width' => 140,
+					'type' => 'text',
+					),
+				'name' => array(
+					'title' => $this->l('Name'),
+					'width' => 140,
+					'type' => 'text',
+					),
+				);
+			$helper = new HelperList();
+
+			$helper->shopLinkType = '';
+
+			$helper->simple_header = true;
+
+		    // Actions to be displayed in the "Actions" column
+			$helper->actions = array('delete');
+
+			$helper->identifier = 'id_giftidea';
+			$helper->show_toolbar = true;
+			$helper->title = 'Liste des produits';
+			$helper->table = '_id_giftidea';
+
+			$helper->token = Tools::getAdminTokenLite('AdminModules');
+			$helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
+			
+			return $helper->generateList($result, $this->fields_list);
+		}
+	}
+	
 	public function hookDisplayHome($params)
 	{
-		$category = new Category(Context::getContext()->shop->getCategory(), (int)Context::getContext()->language->id);
-		$nb = (int)(Configuration::get('GIFT_IDEA_NUMBER'));
-		$products = $category->getProducts((int)Context::getContext()->language->id, 1, ($nb ? $nb : 10));
-		shuffle($products);
+		$sql = 'SELECT id_product FROM '._DB_PREFIX_.'giftidea';
+		$imagePath=array();
+		$url=array();
+		if ($results = Db::getInstance()->ExecuteS($sql))
+    		foreach ($results as $row){
+    			$id_product[]=$row['id_product'];
+    		}
+		shuffle($id_product);
+
+    	for($i=0;$i<3;$i++){
+    		$id=$id_product[$i];
+    		//Get image id
+    		$img=Image::getCover($id);
+			
+			//Get image link
+			$product = new Product($id, false, Context::getContext()->language->id);
+			$link = new Link;//because getImageLInk is not static function
+			$imagePath[]= $link->getImageLink($product->link_rewrite, $img['id_image'], 'home_default');
+			
+			//Get url product
+			$url[]= $link->getProductLink($id);
+    	
+    	}
+		foreach ($imagePath as $key => $value) {
+			$imagePath[$key]=str_replace("prestashop-esgi.16mb.com/","",$value);
+		}
 		$this->smarty->assign(array(
-			'products' => $products
+			'imagePath' => $imagePath,
+			'url' => $url
 			));
 		return $this->display(__FILE__, 'giftidea.tpl');
 	}
